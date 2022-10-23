@@ -2,7 +2,7 @@
 
 [![Maven Central](https://img.shields.io/maven-central/v/org.drewcarlson/objectstore-core-jvm?label=maven&color=blue)](https://search.maven.org/search?q=g:org.drewcarlson%20a:objectstore-*)
 ![](https://github.com/DrewCarlson/ObjectStore/workflows/Tests/badge.svg)
-![Codecov](https://img.shields.io/codecov/c/github/drewcarlson/objectstore?token=7DKJUD60BO)
+![Codecov](https://img.shields.io/codecov/c/github/drewcarlson/objectstore?token=0BID6JXELS)
 
 A modular object storage framework for Kotlin multiplatform projects.
 
