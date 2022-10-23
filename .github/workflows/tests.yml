@@ -88,11 +88,6 @@ jobs:
           key: ${{ runner.os }}-${{ hashFiles('gradle.properties') }}-v1
 
       - uses: gradle/gradle-build-action@v2
-        name: Check API
-        with:
-          arguments: apiCheck
-
-      - uses: gradle/gradle-build-action@v2
         name: Test Linux Target
         with:
           arguments: linuxX64Test
