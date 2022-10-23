@@ -1,0 +1,48 @@
+public final class objectstore/core/BuildConfig {
+	public static final field BUILD_TYPE Ljava/lang/String;
+	public static final field DEBUG Z
+	public static final field LIBRARY_PACKAGE_NAME Ljava/lang/String;
+	public fun <init> ()V
+}
+
+public final class objectstore/core/InMemoryStoreWriter : objectstore/core/ObjectStoreWriter {
+	public fun <init> ()V
+	public fun get (Ljava/lang/String;)Ljava/lang/String;
+	public fun put (Ljava/lang/String;Ljava/lang/String;)V
+}
+
+public final class objectstore/core/ObjectStore {
+	public static final field Companion Lobjectstore/core/ObjectStore$Companion;
+	public fun <init> (Lobjectstore/core/ObjectStoreWriter;Lobjectstore/core/ObjectStoreSerializer;)V
+	public final fun checkKeyForType (Lkotlin/reflect/KType;Ljava/lang/String;)Lkotlin/reflect/KType;
+	public final fun get (Lkotlin/reflect/KType;Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/Object;
+	public static synthetic fun get$default (Lobjectstore/core/ObjectStore;Lkotlin/reflect/KType;Ljava/lang/String;Ljava/lang/Object;ILjava/lang/Object;)Ljava/lang/Object;
+	public final fun getFlow (Lkotlin/reflect/KType;Ljava/lang/String;Ljava/lang/Object;)Lkotlinx/coroutines/flow/StateFlow;
+	public static synthetic fun getFlow$default (Lobjectstore/core/ObjectStore;Lkotlin/reflect/KType;Ljava/lang/String;Ljava/lang/Object;ILjava/lang/Object;)Lkotlinx/coroutines/flow/StateFlow;
+	public final fun getOrNull (Lkotlin/reflect/KType;Ljava/lang/String;)Ljava/lang/Object;
+	public final fun put (Lkotlin/reflect/KType;Ljava/lang/String;Ljava/lang/Object;)V
+	public static synthetic fun put$default (Lobjectstore/core/ObjectStore;Lkotlin/reflect/KType;Ljava/lang/String;Ljava/lang/Object;ILjava/lang/Object;)V
+}
+
+public final class objectstore/core/ObjectStore$Companion {
+	public final fun keyForType (Lkotlin/reflect/KType;)Ljava/lang/String;
+}
+
+public abstract interface class objectstore/core/ObjectStoreSerializer {
+	public abstract fun deserialize (Lkotlin/reflect/KType;Ljava/lang/String;)Ljava/lang/Object;
+	public abstract fun serialize (Lkotlin/reflect/KType;Ljava/lang/Object;)Ljava/lang/String;
+}
+
+public abstract interface class objectstore/core/ObjectStoreWriter {
+	public abstract fun get (Ljava/lang/String;)Ljava/lang/String;
+	public abstract fun put (Ljava/lang/String;Ljava/lang/String;)V
+}
+
+public final class objectstore/core/SharedPreferenceStoreWriter : objectstore/core/ObjectStoreWriter {
+	public fun <init> (Landroid/content/SharedPreferences;)V
+	public fun <init> (Ljava/lang/String;Landroid/content/Context;I)V
+	public synthetic fun <init> (Ljava/lang/String;Landroid/content/Context;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun get (Ljava/lang/String;)Ljava/lang/String;
+	public fun put (Ljava/lang/String;Ljava/lang/String;)V
+}
+

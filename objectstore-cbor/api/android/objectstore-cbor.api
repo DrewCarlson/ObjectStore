@@ -1,0 +1,15 @@
+public final class objectstore/cbor/BuildConfig {
+	public static final field BUILD_TYPE Ljava/lang/String;
+	public static final field DEBUG Z
+	public static final field LIBRARY_PACKAGE_NAME Ljava/lang/String;
+	public fun <init> ()V
+}
+
+public final class objectstore/cbor/CborStoreSerializer : objectstore/core/ObjectStoreSerializer {
+	public fun <init> ()V
+	public fun <init> (Lkotlinx/serialization/cbor/Cbor;)V
+	public synthetic fun <init> (Lkotlinx/serialization/cbor/Cbor;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun deserialize (Lkotlin/reflect/KType;Ljava/lang/String;)Ljava/lang/Object;
+	public fun serialize (Lkotlin/reflect/KType;Ljava/lang/Object;)Ljava/lang/String;
+}
+
