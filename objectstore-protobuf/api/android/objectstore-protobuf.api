@@ -5,7 +5,7 @@ public final class objectstore/protobuf/BuildConfig {
 	public fun <init> ()V
 }
 
-public final class objectstore/protobuf/ProtobufStoreSerializer : objectstore/core/ObjectStoreSerializer {
+public final class objectstore/protobuf/ProtoBufStoreSerializer : objectstore/core/ObjectStoreSerializer {
 	public fun <init> ()V
 	public fun <init> (Lkotlinx/serialization/protobuf/ProtoBuf;)V
 	public synthetic fun <init> (Lkotlinx/serialization/protobuf/ProtoBuf;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
