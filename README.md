@@ -45,6 +45,9 @@ store.put(false, key = "my_key")
 store.get<Boolean>(default = false, key = "my_key")
 ```
 
+**NOTE:** When targeting Javascript, all classes used with `ObjectStore` must be annotated with `@Serializable`.
+This is used to derive class and parameter name based keys, other platforms do not use the [`Kotlinx.serialization`](https://github.com/Kotlin/kotlinx.serialization) library in `objectstore-core`.
+
 ## Serializers
 
 Turning objects into data suitable for storage requires a `ObjectStoreSerializer` implementation.
