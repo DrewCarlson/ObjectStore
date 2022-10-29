@@ -18,14 +18,18 @@ package objectstore.core
 
 import kotlinx.atomicfu.locks.SynchronizedObject
 import kotlinx.atomicfu.locks.synchronized
+import kotlin.reflect.KType
 
 public class InMemoryStoreWriter : ObjectStoreWriter {
     private val lock = SynchronizedObject()
-    private val map = mutableMapOf<String, String>()
+    private val map = mutableMapOf<String, Any?>()
 
-    override fun get(key: String): String? = synchronized(lock) { map[key] }
+    override fun canStoreType(type: KType): Boolean = true
 
-    override fun put(key: String, value: String?): Unit = synchronized(lock) {
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : Any> get(type: KType, key: String): T? = synchronized(lock) { map[key] } as? T
+
+    override fun <T : Any> put(type: KType, key: String, value: T?): Unit = synchronized(lock) {
         if (value == null) map.remove(key) else map[key] = value
     }
 }

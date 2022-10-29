@@ -25,8 +25,8 @@ import kotlin.reflect.KType
 import kotlin.reflect.typeOf
 
 public class ObjectStore(
-    private val storeWriter: ObjectStoreWriter,
-    private val storeSerializer: ObjectStoreSerializer
+    private val storeWriter: ObjectStoreWriter = InMemoryStoreWriter(),
+    private val storeSerializer: ObjectStoreSerializer = ObjectStoreSerializer
 ) {
     public companion object {
         @PublishedApi
@@ -65,20 +65,30 @@ public class ObjectStore(
 
     @PublishedApi
     internal fun <T : Any> getOrNull(type: KType, key: String): T? {
-        return storeWriter.get(key)?.let {
-            storeSerializer.deserialize(type, it)
+        return if (storeWriter.canStoreType(type)) {
+            storeWriter.get(type, key)
+        } else {
+            storeWriter.get<String>(typeOf<String>(), key)?.let {
+                storeSerializer.deserialize(type, it)
+            }
         }
     }
 
     @PublishedApi
     internal fun <T : Any> get(type: KType, key: String, default: T? = null): T {
-        val value = storeWriter.get(key)
-        return if (value == null) {
-            requireNotNull(default) { "No value for '$key' and default was null" }
-            put(type, key, default)
-            default
+        return if (storeWriter.canStoreType(type)) {
+            requireNotNull(storeWriter.get(type, key) ?: default?.also { put(type, key, it) }) {
+                "No value for '$key' and default was null"
+            }
         } else {
-            storeSerializer.deserialize(type, value)
+            val value = storeWriter.get<String>(typeOf<String>(), key)
+            if (value == null) {
+                requireNotNull(default) { "No value for '$key' and default was null" }
+                put(type, key, default)
+                default
+            } else {
+                storeSerializer.deserialize(type, value)
+            }
         }
     }
 
@@ -100,21 +110,24 @@ public class ObjectStore(
     @PublishedApi
     internal fun <T : Any> put(type: KType, key: String, value: T? = null) {
         if (value == null) {
-            storeWriter.put(key, null)
+            storeWriter.put(type, key, null)
         } else {
-            val serialized = storeSerializer.serialize(type, value)
-            storeWriter.put(key, serialized)
+            if (storeWriter.canStoreType(type)) {
+                storeWriter.put(type, key, value)
+            } else {
+                val serialized = storeSerializer.serialize(type, value)
+                storeWriter.put(typeOf<String>(), key, serialized)
+            }
 
-            synchronized(lock) {
-                @Suppress("UNCHECKED_CAST")
-                (flowsMap[key] as? MutableStateFlow<T?>)
-            }?.update { value }
+            @Suppress("UNCHECKED_CAST")
+            val flow = synchronized(lock) { flowsMap[key] } as? MutableStateFlow<T?>
+            flow?.update { value }
         }
     }
 
     @PublishedApi
     internal fun checkKeyForType(type: KType, key: String?): KType {
-        when (type) {
+        when (type.classifier) {
             Boolean::class,
             Long::class,
             Int::class,

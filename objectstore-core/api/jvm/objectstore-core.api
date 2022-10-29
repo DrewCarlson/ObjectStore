@@ -1,12 +1,16 @@
 public final class objectstore/core/InMemoryStoreWriter : objectstore/core/ObjectStoreWriter {
 	public fun <init> ()V
-	public fun get (Ljava/lang/String;)Ljava/lang/String;
-	public fun put (Ljava/lang/String;Ljava/lang/String;)V
+	public fun canStoreType (Lkotlin/reflect/KType;)Z
+	public fun get (Lkotlin/reflect/KType;Ljava/lang/String;)Ljava/lang/Object;
+	public fun put (Lkotlin/reflect/KType;Ljava/lang/String;Ljava/lang/Object;)V
+	public fun unhandledType (Lkotlin/reflect/KType;)Ljava/lang/Void;
 }
 
 public final class objectstore/core/ObjectStore {
 	public static final field Companion Lobjectstore/core/ObjectStore$Companion;
+	public fun <init> ()V
 	public fun <init> (Lobjectstore/core/ObjectStoreWriter;Lobjectstore/core/ObjectStoreSerializer;)V
+	public synthetic fun <init> (Lobjectstore/core/ObjectStoreWriter;Lobjectstore/core/ObjectStoreSerializer;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun checkKeyForType (Lkotlin/reflect/KType;Ljava/lang/String;)Lkotlin/reflect/KType;
 	public final fun get (Lkotlin/reflect/KType;Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/Object;
 	public static synthetic fun get$default (Lobjectstore/core/ObjectStore;Lkotlin/reflect/KType;Ljava/lang/String;Ljava/lang/Object;ILjava/lang/Object;)Ljava/lang/Object;
@@ -22,12 +26,24 @@ public final class objectstore/core/ObjectStore$Companion {
 }
 
 public abstract interface class objectstore/core/ObjectStoreSerializer {
+	public static final field Companion Lobjectstore/core/ObjectStoreSerializer$Companion;
 	public abstract fun deserialize (Lkotlin/reflect/KType;Ljava/lang/String;)Ljava/lang/Object;
 	public abstract fun serialize (Lkotlin/reflect/KType;Ljava/lang/Object;)Ljava/lang/String;
 }
 
+public final class objectstore/core/ObjectStoreSerializer$Companion : objectstore/core/ObjectStoreSerializer {
+	public fun deserialize (Lkotlin/reflect/KType;Ljava/lang/String;)Ljava/lang/Object;
+	public fun serialize (Lkotlin/reflect/KType;Ljava/lang/Object;)Ljava/lang/String;
+}
+
 public abstract interface class objectstore/core/ObjectStoreWriter {
-	public abstract fun get (Ljava/lang/String;)Ljava/lang/String;
-	public abstract fun put (Ljava/lang/String;Ljava/lang/String;)V
+	public abstract fun canStoreType (Lkotlin/reflect/KType;)Z
+	public abstract fun get (Lkotlin/reflect/KType;Ljava/lang/String;)Ljava/lang/Object;
+	public abstract fun put (Lkotlin/reflect/KType;Ljava/lang/String;Ljava/lang/Object;)V
+	public abstract fun unhandledType (Lkotlin/reflect/KType;)Ljava/lang/Void;
+}
+
+public final class objectstore/core/ObjectStoreWriter$DefaultImpls {
+	public static fun unhandledType (Lobjectstore/core/ObjectStoreWriter;Lkotlin/reflect/KType;)Ljava/lang/Void;
 }
 

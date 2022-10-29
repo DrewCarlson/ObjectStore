@@ -39,6 +39,7 @@ data class TestClassWithGeneric<T>(
     val value: T?
 )
 
+class NoSerializerStoreTest : ObjectStoreTest(CborStoreSerializer())
 class CborObjectStoreTest : ObjectStoreTest(CborStoreSerializer())
 class JsonObjectStoreTest : ObjectStoreTest(JsonStoreSerializer())
 class ProtobufObjectStoreTest : ObjectStoreTest(ProtoBufStoreSerializer())
@@ -120,10 +121,31 @@ abstract class ObjectStoreTest(
     }
 
     @Test
-    fun testSetWithBasicType() {
+    fun testSetAndGetWithBasicType() {
         store.put(value = 1, "test")
-
         assertEquals(1, store.get(key = "test"))
+        store.put(value = true, "test2")
+        assertEquals(true, store.get(key = "test2"))
+        store.put(value = 1L, "test3")
+        assertEquals(1L, store.get(key = "test3"))
+        store.put(value = 1f, "test4")
+        assertEquals(1f, store.get(key = "test4"))
+    }
+
+    @Test
+    fun testSetAndDelete() {
+        store.put(value = 1, "test")
+        store.put(value = null, "test")
+        assertNull(store.getOrNull(key = "test"))
+        store.put(value = true, "test2")
+        store.put(value = null, "test2")
+        assertNull(store.get(key = "test2"))
+        store.put(value = 1L, "test3")
+        store.put(value = null, "test3")
+        assertNull(store.get(key = "test3"))
+        store.put(value = 1f, "test4")
+        store.put(value = null, "test4")
+        assertNull(store.get(key = "test4"))
     }
 
     @Test

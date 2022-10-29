@@ -16,9 +16,17 @@
  */
 package objectstore.core
 
+import kotlin.reflect.KType
+
 public interface ObjectStoreWriter {
 
-    public fun put(key: String, value: String?)
+    public fun canStoreType(type: KType): Boolean
 
-    public fun get(key: String): String?
+    public fun <T : Any> put(type: KType, key: String, value: T?)
+
+    public fun <T : Any> get(type: KType, key: String): T?
+
+    public fun unhandledType(type: KType): Nothing {
+        error("Unsupported storage type '$type', install an ObjectStoreSerializer")
+    }
 }

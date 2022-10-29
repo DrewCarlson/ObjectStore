@@ -18,6 +18,7 @@ package objectstore.core
 
 import android.content.Context
 import android.content.SharedPreferences
+import kotlin.reflect.KType
 
 public class SharedPreferenceStoreWriter(
     private val sharedPreferences: SharedPreferences
@@ -26,11 +27,45 @@ public class SharedPreferenceStoreWriter(
     public constructor(name: String, context: Context, mode: Int = Context.MODE_PRIVATE) :
         this(context.getSharedPreferences(name, mode))
 
-    override fun put(key: String, value: String?) {
-        sharedPreferences.edit().putString(key, value).apply()
+    override fun canStoreType(type: KType): Boolean {
+        return when (type.classifier) {
+            String::class,
+            Boolean::class,
+            Int::class,
+            Long::class,
+            Float::class -> true
+            else -> false
+        }
     }
 
-    override fun get(key: String): String? {
-        return sharedPreferences.getString(key, null)
+    override fun <T : Any> put(type: KType, key: String, value: T?) {
+        sharedPreferences.edit().apply {
+            if (value == null) {
+                remove(key)
+                return@apply
+            }
+            when (value) {
+                is Int -> putInt(key, value)
+                is Long -> putLong(key, value)
+                is Float -> putFloat(key, value)
+                is String -> putString(key, value)
+                is Boolean -> putBoolean(key, value)
+                else -> unhandledType(type)
+            }
+        }.apply()
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : Any> get(type: KType, key: String): T? {
+        return with(sharedPreferences) {
+            when (type.classifier) {
+                Int::class -> if (contains(key)) getInt(key, 0) else null
+                Long::class -> if (contains(key)) getLong(key, 0) else null
+                Float::class -> if (contains(key)) getFloat(key, 0f) else null
+                String::class -> if (contains(key)) getString(key, null) else null
+                Boolean::class -> if (contains(key)) getBoolean(key, false) else null
+                else -> unhandledType(type)
+            } as T?
+        }
     }
 }

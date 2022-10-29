@@ -16,20 +16,31 @@
  */
 package objectstore.core
 
-import kotlin.reflect.KType
+import org.junit.Before
+import org.junit.Test
+import kotlin.reflect.typeOf
+import kotlin.test.assertFailsWith
 
-public interface ObjectStoreSerializer {
+class SharedPreferenceStoreWriterTest : RobolectricTestCases() {
 
-    public companion object : ObjectStoreSerializer {
-        override fun <T : Any> serialize(type: KType, data: T): String {
-            error("ObjectStore requires a custom serializer to handle '$type'")
-        }
-        override fun <T : Any> deserialize(type: KType, data: String): T {
-            error("ObjectStore requires a custom serializer to handle '$type'")
+    lateinit var writer: ObjectStoreWriter
+
+    @Before
+    fun setup() {
+        writer = getStoreWriter(secure = false)
+    }
+
+    @Test
+    fun testGetWithClassFails() {
+        assertFailsWith<IllegalStateException> {
+            writer.get<TestClass>(typeOf<TestClass>(), "test")
         }
     }
 
-    public fun <T : Any> serialize(type: KType, data: T): String
-
-    public fun <T : Any> deserialize(type: KType, data: String): T
+    @Test
+    fun testPutWithClassFails() {
+        assertFailsWith<IllegalStateException> {
+            writer.put(typeOf<TestClass>(), "test", TestClass())
+        }
+    }
 }
