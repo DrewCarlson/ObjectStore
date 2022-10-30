@@ -139,13 +139,13 @@ abstract class ObjectStoreTest(
         assertNull(store.getOrNull(key = "test"))
         store.put(value = true, "test2")
         store.put(value = null, "test2")
-        assertNull(store.get(key = "test2"))
+        assertNull(store.getOrNull(key = "test2"))
         store.put(value = 1L, "test3")
         store.put(value = null, "test3")
-        assertNull(store.get(key = "test3"))
+        assertNull(store.getOrNull(key = "test3"))
         store.put(value = 1f, "test4")
         store.put(value = null, "test4")
-        assertNull(store.get(key = "test4"))
+        assertNull(store.getOrNull(key = "test4"))
     }
 
     @Test
