@@ -18,15 +18,47 @@ package objectstore.core
 
 import platform.Foundation.NSUserDefaults
 import platform.Foundation.setValue
+import kotlin.reflect.KType
 
 public class UserDefaultsStoreWriter(
     private val defaults: NSUserDefaults = NSUserDefaults.standardUserDefaults
 ) : ObjectStoreWriter {
-    override fun get(key: String): String? {
-        return defaults.stringForKey(key)
+
+    override fun canStoreType(type: KType): Boolean {
+        return when (type.classifier) {
+            String::class,
+            Boolean::class,
+            Int::class,
+            Long::class,
+            Float::class -> true
+            else -> false
+        }
     }
 
-    override fun put(key: String, value: String?) {
-        return defaults.setValue(value = value, forKey = key)
+    override fun <T : Any> put(type: KType, key: String, value: T?) {
+        if (value == null) {
+            defaults.removeObjectForKey(key)
+            return
+        }
+        return when (value) {
+            is String -> defaults.setValue(value = value, forKey = key)
+            is Boolean -> defaults.setBool(value = value, forKey = key)
+            is Int -> defaults.setObject(value = value, forKey = key)
+            is Long -> defaults.setObject(value = value, forKey = key)
+            is Float -> defaults.setFloat(value = value, forKey = key)
+            else -> unhandledType(type)
+        }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : Any> get(type: KType, key: String): T? {
+        return when (type.classifier) {
+            String::class -> defaults.stringForKey(key) as T?
+            Boolean::class -> defaults.boolForKey(key) as T?
+            Int::class -> defaults.objectForKey(key) as T?
+            Long::class -> defaults.objectForKey(key) as T?
+            Float::class -> defaults.floatForKey(key) as T?
+            else -> error("Cannot retrieve type '$type'")
+        }
     }
 }

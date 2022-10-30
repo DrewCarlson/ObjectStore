@@ -23,6 +23,7 @@ import platform.Foundation.*
 import platform.Security.*
 import platform.darwin.OSStatus
 import platform.darwin.noErr
+import kotlin.reflect.KType
 
 public class KeychainStoreWriter(
     private val serviceName: String,
@@ -30,11 +31,30 @@ public class KeychainStoreWriter(
     private val access: KeychainAccess = KeychainAccess.WhenUnlockedThisDeviceOnly
 ) : ObjectStoreWriter {
 
-    override fun get(key: String): String? {
-        return value(key)?.asString()
+    override fun canStoreType(type: KType): Boolean {
+        return when (type.classifier) {
+            String::class,
+            Boolean::class,
+            Int::class,
+            Long::class,
+            Float::class -> true
+            else -> false
+        }
     }
 
-    override fun put(key: String, value: String?) {
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : Any> get(type: KType, key: String): T? {
+        return when (type.classifier) {
+            String::class -> value(key)?.asString() as T?
+            Boolean::class -> value(key)?.asBoolean() as T?
+            Long::class -> value(key)?.asLong() as T?
+            Int::class -> value(key)?.asInt() as T?
+            Float::class -> value(key)?.asFloat() as T?
+            else -> unhandledType(type)
+        }
+    }
+
+    override fun <T : Any> put(type: KType, key: String, value: T?) {
         if (exists(key)) {
             if (value == null) {
                 delete(key)
@@ -42,7 +62,15 @@ public class KeychainStoreWriter(
                 update(key, value)
             }
         } else {
-            add(key, value?.toNSData())
+            val convertedValue = when (value) {
+                is String -> value.toNSData()
+                is Boolean -> value.toNSData()
+                is Int -> value.toNSData()
+                is Long -> value.toNSData()
+                is Float -> value.toNSData()
+                else -> unhandledType(type)
+            }
+            add(key, convertedValue)
         }
     }
 
@@ -135,8 +163,44 @@ public class KeychainStoreWriter(
     private fun String.toNSData(): NSData? =
         NSString.create(string = this).dataUsingEncoding(NSUTF8StringEncoding)
 
+    private fun Boolean.toNSData(): NSData = memScoped {
+        val value = allocArrayOf(byteArrayOf(if (this@toNSData) 1 else 0))
+        NSData.create(bytes = value, length = 0u)
+    }
+
+    private fun Int.toNSData(): NSData = memScoped {
+        val int = alloc<IntVar>().also { it.value = this@toNSData }
+        return NSData.create(bytes = int.ptr, length = sizeOf<IntVar>().toUInt())
+    }
+
+    private fun Long.toNSData(): NSData = memScoped {
+        val int = alloc<LongVar>().also { it.value = this@toNSData }
+        return NSData.create(bytes = int.ptr, length = sizeOf<LongVar>().toUInt())
+    }
+
+    private fun Float.toNSData(): NSData = memScoped {
+        val int = alloc<FloatVar>().also { it.value = this@toNSData }
+        return NSData.create(bytes = int.ptr, length = sizeOf<FloatVar>().toUInt())
+    }
+
     private fun NSData.asString(): String? {
         return NSString.create(this, NSUTF8StringEncoding) as String?
+    }
+
+    private fun NSData.asBoolean(): Boolean? {
+        return (asString() ?: return null) == "1"
+    }
+
+    private fun NSData.asInt(): Int {
+        return bytes!!.reinterpret<IntVar>().pointed.value
+    }
+
+    private fun NSData.asLong(): Long {
+        return bytes!!.reinterpret<LongVar>().pointed.value
+    }
+
+    private fun NSData.asFloat(): Float {
+        return bytes!!.reinterpret<FloatVar>().pointed.value
     }
 
     private fun OSStatus.checkState(): Boolean {
