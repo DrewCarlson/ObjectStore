@@ -42,12 +42,12 @@ public class ObjectStore(
 
     public inline fun <reified T : Any> getOrNull(key: String? = null): T? {
         val type = checkKeyForType(typeOf<T>(), key)
-        return getOrNull(typeOf<T>(), key ?: keyForType(type))
+        return getOrNull(type, key ?: keyForType(type))
     }
 
     public inline fun <reified T : Any> get(default: T? = null, key: String? = null): T {
         val type = checkKeyForType(typeOf<T>(), key)
-        return get(typeOf<T>(), key ?: keyForType(type), default)
+        return get(type, key ?: keyForType(type), default)
     }
 
     public inline fun <reified T : Any> getFlow(
@@ -55,12 +55,12 @@ public class ObjectStore(
         key: String? = null
     ): StateFlow<T?> {
         val type = checkKeyForType(typeOf<T>(), key)
-        return getFlow(typeOf<T>(), key ?: keyForType(type), default)
+        return getFlow(type, key ?: keyForType(type), default)
     }
 
     public inline fun <reified T : Any> put(value: T?, key: String? = null) {
         val type = checkKeyForType(typeOf<T>(), key)
-        return put(typeOf<T>(), key ?: keyForType(type), value)
+        return put(type, key ?: keyForType(type), value)
     }
 
     @PublishedApi
