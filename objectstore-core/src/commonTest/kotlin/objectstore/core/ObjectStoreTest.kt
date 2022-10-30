@@ -115,9 +115,21 @@ abstract class ObjectStoreTest(
     @Test
     fun testGetFlowWithDefaultEmitsDefault() {
         val expected = TestClass()
-        val subject = store.getFlow(expected)
+        val subject = store.getFlow(default = expected)
 
         assertEquals(expected, subject.value)
+    }
+
+    @Test
+    fun testGetFlowEmitsRemove() {
+        val expected = TestClass()
+        val subject = store.getFlow(default = expected)
+
+        assertEquals(expected, subject.value)
+
+        store.remove<TestClass>()
+
+        assertNull(subject.value)
     }
 
     @Test
@@ -133,18 +145,18 @@ abstract class ObjectStoreTest(
     }
 
     @Test
-    fun testSetAndDelete() {
+    fun testSetAndRemove() {
         store.put(value = 1, "test")
-        store.put(value = null, "test")
+        store.remove<Int>("test")
         assertNull(store.getOrNull(key = "test"))
         store.put(value = true, "test2")
-        store.put(value = null, "test2")
+        store.remove<Int>("test2")
         assertNull(store.getOrNull(key = "test2"))
         store.put(value = 1L, "test3")
-        store.put(value = null, "test3")
+        store.remove<Long>("test3")
         assertNull(store.getOrNull(key = "test3"))
         store.put(value = 1f, "test4")
-        store.put(value = null, "test4")
+        store.remove<Float>("test4")
         assertNull(store.getOrNull(key = "test4"))
     }
 

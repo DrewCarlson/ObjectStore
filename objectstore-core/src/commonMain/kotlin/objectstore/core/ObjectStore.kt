@@ -60,7 +60,12 @@ public class ObjectStore(
 
     public inline fun <reified T : Any> put(value: T?, key: String? = null) {
         val type = checkKeyForType(typeOf<T>(), key)
-        return put(type, key ?: keyForType(type), value)
+        put(type, key ?: keyForType(type), value)
+    }
+
+    public inline fun <reified T : Any> remove(key: String? = null) {
+        val type = checkKeyForType(typeOf<T>(), key)
+        remove<T>(type, key ?: keyForType(type))
     }
 
     @PublishedApi
@@ -118,11 +123,19 @@ public class ObjectStore(
                 val serialized = storeSerializer.serialize(type, value)
                 storeWriter.put(typeOf<String>(), key, serialized)
             }
-
-            @Suppress("UNCHECKED_CAST")
-            val flow = synchronized(lock) { flowsMap[key] } as? MutableStateFlow<T?>
-            flow?.update { value }
         }
+
+        @Suppress("UNCHECKED_CAST")
+        val flow = synchronized(lock) { flowsMap[key] } as? MutableStateFlow<T?>
+        flow?.update { value }
+    }
+
+    @PublishedApi
+    internal fun <T : Any> remove(type: KType, key: String) {
+        storeWriter.put<T>(type, key, null)
+        @Suppress("UNCHECKED_CAST")
+        val flow = synchronized(lock) { flowsMap[key] } as? MutableStateFlow<T?>
+        flow?.update { null }
     }
 
     @PublishedApi

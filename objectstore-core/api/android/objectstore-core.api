@@ -26,6 +26,7 @@ public final class objectstore/core/ObjectStore {
 	public final fun getOrNull (Lkotlin/reflect/KType;Ljava/lang/String;)Ljava/lang/Object;
 	public final fun put (Lkotlin/reflect/KType;Ljava/lang/String;Ljava/lang/Object;)V
 	public static synthetic fun put$default (Lobjectstore/core/ObjectStore;Lkotlin/reflect/KType;Ljava/lang/String;Ljava/lang/Object;ILjava/lang/Object;)V
+	public final fun remove (Lkotlin/reflect/KType;Ljava/lang/String;)V
 }
 
 public final class objectstore/core/ObjectStore$Companion {
