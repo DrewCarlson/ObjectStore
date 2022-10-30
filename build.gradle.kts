@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.targets.js.yarn.yarn
+import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeSimulatorTest
 
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
@@ -59,6 +60,16 @@ subprojects {
             licenseHeaderFile(rootDir.resolve("licenseHeader.txt"))
             ktlint(libs.versions.ktlint.get())
                 .editorConfigOverride(mapOf("disabled_rules" to "no-wildcard-imports,no-unused-imports"))
+        }
+    }
+
+    afterEvaluate {
+        listOfNotNull(
+            tasks.findByName("iosSimulatorArm64Test"),
+            tasks.findByName("iosX64Test")
+        ).forEach {
+            (it as KotlinNativeSimulatorTest)
+            it.deviceId = "iPhone 14"
         }
     }
 }

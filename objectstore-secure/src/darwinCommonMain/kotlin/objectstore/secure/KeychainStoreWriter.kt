@@ -14,6 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@file:OptIn(UnsafeNumber::class)
+
 package objectstore.secure
 
 import kotlinx.cinterop.*
@@ -160,49 +162,6 @@ public class KeychainStoreWriter(
         }
     }
 
-    private fun String.toNSData(): NSData? =
-        NSString.create(string = this).dataUsingEncoding(NSUTF8StringEncoding)
-
-    private fun Boolean.toNSData(): NSData = memScoped {
-        val value = allocArrayOf(byteArrayOf(if (this@toNSData) 1 else 0))
-        NSData.create(bytes = value, length = 0u)
-    }
-
-    private fun Int.toNSData(): NSData = memScoped {
-        val int = alloc<IntVar>().also { it.value = this@toNSData }
-        return NSData.create(bytes = int.ptr, length = sizeOf<IntVar>().toUInt())
-    }
-
-    private fun Long.toNSData(): NSData = memScoped {
-        val int = alloc<LongVar>().also { it.value = this@toNSData }
-        return NSData.create(bytes = int.ptr, length = sizeOf<LongVar>().toUInt())
-    }
-
-    private fun Float.toNSData(): NSData = memScoped {
-        val int = alloc<FloatVar>().also { it.value = this@toNSData }
-        return NSData.create(bytes = int.ptr, length = sizeOf<FloatVar>().toUInt())
-    }
-
-    private fun NSData.asString(): String? {
-        return NSString.create(this, NSUTF8StringEncoding) as String?
-    }
-
-    private fun NSData.asBoolean(): Boolean? {
-        return (asString() ?: return null) == "1"
-    }
-
-    private fun NSData.asInt(): Int {
-        return bytes!!.reinterpret<IntVar>().pointed.value
-    }
-
-    private fun NSData.asLong(): Long {
-        return bytes!!.reinterpret<LongVar>().pointed.value
-    }
-
-    private fun NSData.asFloat(): Float {
-        return bytes!!.reinterpret<FloatVar>().pointed.value
-    }
-
     private fun OSStatus.checkState(): Boolean {
         check(toUInt() == noErr) {
             "Keychain access failed: errorCode=$this " + when (this) {
@@ -224,4 +183,46 @@ public class KeychainStoreWriter(
         }
         return true
     }
+}
+
+internal fun String.toNSData(): NSData? =
+    NSString.create(string = this).dataUsingEncoding(NSUTF8StringEncoding)
+
+internal fun Boolean.toNSData(): NSData? {
+    return (if (this) "1" else "0").toNSData()
+}
+
+internal fun Int.toNSData(): NSData = memScoped {
+    val int = alloc<IntVar>().also { it.value = this@toNSData }
+    return NSData.create(bytes = int.ptr, length = sizeOf<IntVar>().convert())
+}
+
+internal fun Long.toNSData(): NSData = memScoped {
+    val int = alloc<LongVar>().also { it.value = this@toNSData }
+    return NSData.create(bytes = int.ptr, length = sizeOf<LongVar>().convert())
+}
+
+internal fun Float.toNSData(): NSData = memScoped {
+    val int = alloc<FloatVar>().also { it.value = this@toNSData }
+    return NSData.create(bytes = int.ptr, length = sizeOf<FloatVar>().convert())
+}
+
+internal fun NSData.asString(): String? {
+    return NSString.create(this, NSUTF8StringEncoding) as String?
+}
+
+internal fun NSData.asBoolean(): Boolean? {
+    return (asString() ?: return null) == "1"
+}
+
+internal fun NSData.asInt(): Int? {
+    return bytes?.reinterpret<IntVar>()?.pointed?.value
+}
+
+internal fun NSData.asLong(): Long? {
+    return bytes?.reinterpret<LongVar>()?.pointed?.value
+}
+
+internal fun NSData.asFloat(): Float? {
+    return bytes?.reinterpret<FloatVar>()?.pointed?.value
 }
