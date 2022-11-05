@@ -5,7 +5,11 @@ plugins {
 
 apply(from = "../gradle/publishing.gradle.kts")
 
-androidLib("objectstore.secure")
+androidLib("objectstore.secure") {
+    defaultConfig {
+        minSdk = 23
+    }
+}
 
 kotlin {
     android { publishAllLibraryVariants() }

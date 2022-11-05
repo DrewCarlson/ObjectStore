@@ -10,6 +10,7 @@ spotless = "6.11.0"
 ktlint = "0.47.0"
 robolectric = "4.9"
 binary_compat = "0.12.1"
+okio = "3.2.0"
 
 [plugins]
 multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
@@ -41,3 +42,7 @@ agp = { module = "com.android.tools.build:gradle", version.ref = "agp" }
 androidx-security-crypto = { module = "androidx.security:security-crypto-ktx", version = "1.1.0-alpha03" }
 
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
+
+okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
+okio-nodefilesystem = { module = "com.squareup.okio:okio-nodefilesystem", version.ref = "okio" }
+okio-fakefilesystem = { module = "com.squareup.okio:okio-fakefilesystem", version.ref = "okio" }

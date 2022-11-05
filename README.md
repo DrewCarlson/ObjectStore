@@ -74,6 +74,17 @@ To store data in a secure way, the `objectstore-secure` module provides Writers 
 - iOS/macOS/tvOS/watchOS: `KeychainStoreWritre("com.service.name", "com.service.group")`
 - Android: `EncryptedSharedPreferencesStoreWriter("prefs_name", context)`
 
+### File Writer
+
+The `objectstore-fs` provides file based storage using [okio](https://square.github.io/okio).
+All targets are supported except `iosArm32` and `jsBrowser`.
+
+```kotlin
+FileStoreWriter("/storage-dir")
+```
+
+File names will be hex encoded SHA1 sums of the provided key name.
+
 ## Download
 
 [![Maven Central](https://img.shields.io/maven-central/v/org.drewcarlson/objectstore-core-jvm?label=maven&color=blue)](https://search.maven.org/search?q=g:org.drewcarlson%20a:objectstore-*)
@@ -105,6 +116,7 @@ dependencies {
     implementation("org.drewcarlson:objectstore-protobuf:$VERSION")
     
     // Writers
+    implementation("org.drewcarlson:objectstore-fs:$VERSION")
     implementation("org.drewcarlson:objectstore-secure:$VERSION")
 }
 ```
@@ -118,6 +130,7 @@ objectstore = "1.0.0-SNAPSHOT"
 
 [libraries]
 objectstore-core = { module = "org.drewcarlson:objectstore-core", version.ref = "objectstore" }
+objectstore-fs = { module = "org.drewcarlson:objectstore-fs", version.ref = "objectstore" }
 objectstore-cbor = { module = "org.drewcarlson:objectstore-cbor", version.ref = "objectstore" }
 objectstore-json = { module = "org.drewcarlson:objectstore-json", version.ref = "objectstore" }
 objectstore-protobuf = { module = "org.drewcarlson:objectstore-protobuf", version.ref = "objectstore" }

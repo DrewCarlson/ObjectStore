@@ -1,0 +1,4 @@
+public final class objectstore/fs/FileStoreWriterKt {
+	public static final fun FileStoreWriter (Ljava/lang/String;)Lobjectstore/core/ObjectStoreWriter;
+}
+

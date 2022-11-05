@@ -1,0 +1,74 @@
+/**
+ * ObjectStore
+ * Copyright (C) 2022 Drew Carlson
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package objectstore.fs
+
+import objectstore.core.ObjectStoreWriter
+import okio.ByteString.Companion.encodeUtf8
+import okio.FileSystem
+import okio.Path
+import okio.Path.Companion.toPath
+import kotlin.reflect.KType
+import kotlin.reflect.typeOf
+
+public fun FileStoreWriter(path: String): ObjectStoreWriter {
+    return FileStoreWriter(path, FS)
+}
+
+internal class FileStoreWriter(
+    path: String,
+    private val fs: FileSystem
+) : ObjectStoreWriter {
+
+    private val path: Path = path.toPath()
+
+    init {
+        if (fs.exists(this.path)) {
+            val metadata = fs.metadataOrNull(this.path)
+            require(metadata?.isDirectory == true) {
+                "FileStoreWriter path must be a directory."
+            }
+        } else {
+            fs.createDirectories(this.path, true)
+        }
+    }
+
+    override fun canStoreType(type: KType): Boolean {
+        return type == typeOf<String>()
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : Any> get(type: KType, key: String): T? {
+        val keyHash = key.encodeUtf8().sha1().hex()
+        val objectPath = path.resolve(keyHash)
+        return if (fs.exists(objectPath)) {
+            fs.read(objectPath) { readUtf8() } as T?
+        } else {
+            null
+        }
+    }
+
+    override fun <T : Any> put(type: KType, key: String, value: T?) {
+        val keyHash = key.encodeUtf8().sha1().hex()
+        val objectPath = path.resolve(keyHash)
+        if (value == null) {
+            fs.delete(objectPath)
+        } else {
+            println(objectPath.toString())
+            fs.write(objectPath) { writeUtf8(value as String) }
+        }
+    }
+}

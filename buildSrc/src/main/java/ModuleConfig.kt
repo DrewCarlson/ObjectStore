@@ -6,25 +6,32 @@ import org.gradle.api.plugins.ExtensionAware
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithHostTests
 
-fun KotlinMultiplatformExtension.jsAll() {
+fun KotlinMultiplatformExtension.jsAll(enableBrowser: Boolean = true) {
     js(IR) {
         nodejs()
-        browser {
-            testTask {
-                useKarma {
-                    useFirefoxHeadless()
+        if (enableBrowser) {
+            browser {
+                testTask {
+                    useKarma {
+                        useFirefoxHeadless()
+                    }
                 }
             }
         }
     }
 }
 
-fun KotlinMultiplatformExtension.iosAll() {
-    iosAll { }
+fun KotlinMultiplatformExtension.iosAll(enableArm32: Boolean = true) {
+    iosAll(enableArm32) { }
 }
 
-fun KotlinMultiplatformExtension.iosAll(configure: Action<KotlinNativeTarget>) {
-    iosArm32(configure)
+fun KotlinMultiplatformExtension.iosAll(
+    enableArm32: Boolean = true,
+    configure: Action<KotlinNativeTarget>
+) {
+    if (enableArm32) {
+        iosArm32(configure)
+    }
     iosArm64(configure)
     iosX64 { configure.execute(this) }
     iosSimulatorArm64 { configure.execute(this) }
@@ -36,8 +43,10 @@ fun KotlinMultiplatformExtension.iosAll(configure: Action<KotlinNativeTarget>) {
         dependsOn(sourceSets.getByName("commonTest"))
     }
 
-    sourceSets.getByName("iosArm32Main") { dependsOn(iosCommonMain) }
-    sourceSets.getByName("iosArm32Test") { dependsOn(iosCommonTest) }
+    if (enableArm32) {
+        sourceSets.getByName("iosArm32Main") { dependsOn(iosCommonMain) }
+        sourceSets.getByName("iosArm32Test") { dependsOn(iosCommonTest) }
+    }
     sourceSets.getByName("iosArm64Main") { dependsOn(iosCommonMain) }
     sourceSets.getByName("iosArm64Test") { dependsOn(iosCommonTest) }
     sourceSets.getByName("iosX64Main") { dependsOn(iosCommonMain) }
