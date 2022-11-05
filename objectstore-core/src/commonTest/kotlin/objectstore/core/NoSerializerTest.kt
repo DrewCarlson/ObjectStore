@@ -17,18 +17,19 @@
 package objectstore.core
 
 import kotlin.reflect.KType
+import kotlin.reflect.typeOf
 import kotlin.test.*
 
 class NoSerializerTest : RobolectricTestCases() {
 
     private lateinit var store: ObjectStore
+    private lateinit var storeWriter: ObjectStoreWriter
 
     @BeforeTest
     fun setup() {
         val defaultStoreWriter = getStoreWriter(false).takeUnless { it is InMemoryStoreWriter }
-        store = ObjectStore(
-            storeWriter = defaultStoreWriter ?: BasicTypeStoreWriter
-        )
+        storeWriter = defaultStoreWriter ?: BasicTypeStoreWriter
+        store = ObjectStore(storeWriter = storeWriter)
     }
 
     @Test
@@ -40,14 +41,22 @@ class NoSerializerTest : RobolectricTestCases() {
 
     @Test
     fun testSetAndGetWithBasicType() {
-        store.put(value = 1, "test")
-        assertEquals(1, store.get(key = "test"))
-        store.put(value = true, "test2")
-        assertEquals(true, store.get(key = "test2"))
-        store.put(value = 1L, "test3")
-        assertEquals(1L, store.get(key = "test3"))
-        store.put(value = 1f, "test4")
-        assertEquals(1f, store.get(key = "test4"))
+        if (storeWriter.canStoreType(typeOf<Int>())) {
+            store.put(value = 1, "test")
+            assertEquals(1, store.get(key = "test"))
+        }
+        if (storeWriter.canStoreType(typeOf<Boolean>())) {
+            store.put(value = true, "test2")
+            assertEquals(true, store.get(key = "test2"))
+        }
+        if (storeWriter.canStoreType(typeOf<Long>())) {
+            store.put(value = 1L, "test3")
+            assertEquals(1L, store.get(key = "test3"))
+        }
+        if (storeWriter.canStoreType(typeOf<Float>())) {
+            store.put(value = 1f, "test4")
+            assertEquals(1f, store.get(key = "test4"))
+        }
     }
 }
 

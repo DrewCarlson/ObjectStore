@@ -65,14 +65,8 @@ The following Writers are provided in the `objectstore-core` module:
 
 - Android: `SharedPreferencesStoreWriter("prefs_name", context)`
 - iOS/macOS/tvOS/watchOS: `UserDefaultsStoreWriter()`
+- Browser JS: `LocalStorageStoreWriter()`
 - All: `InMemoryStoreWriter()`
-
-### Secure Writers
-
-To store data in a secure way, the `objectstore-secure` module provides Writers which encrypt data when stored on disk.
-
-- iOS/macOS/tvOS/watchOS: `KeychainStoreWritre("com.service.name", "com.service.group")`
-- Android: `EncryptedSharedPreferencesStoreWriter("prefs_name", context)`
 
 ### File Writer
 
@@ -80,10 +74,20 @@ The `objectstore-fs` provides file based storage using [okio](https://square.git
 All targets are supported except `iosArm32` and `jsBrowser`.
 
 ```kotlin
-FileStoreWriter("/storage-dir")
+val store = ObjectStore(
+    storeWriter = FileStoreWriter("/storage-directory")
+)
 ```
 
-File names will be hex encoded SHA1 sums of the provided key name.
+The provided path must not exist or be an existing directory where files can be stored.
+Each value will be stored in a separate file using the hex encoded SHA1 sum of the key as the filename.
+
+### Secure Writers
+
+To store data in a secure way, the `objectstore-secure` module provides Writers which encrypt data when stored on disk.
+
+- iOS/macOS/tvOS/watchOS: `KeychainStoreWritre("com.service.name", "com.service.group")`
+- Android: `EncryptedSharedPreferencesStoreWriter("prefs_name", context)`
 
 ## Download
 

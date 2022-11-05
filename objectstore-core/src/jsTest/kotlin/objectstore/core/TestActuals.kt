@@ -16,6 +16,11 @@
  */
 package objectstore.core
 
-actual fun getStoreWriter(secure: Boolean): ObjectStoreWriter = InMemoryStoreWriter()
+import kotlinx.browser.window
+
+actual fun getStoreWriter(secure: Boolean): ObjectStoreWriter {
+    runCatching { window.localStorage.clear() }
+    return LocalStorageStoreWriter()
+}
 
 actual abstract class RobolectricTestCases actual constructor()
