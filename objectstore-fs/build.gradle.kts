@@ -25,6 +25,7 @@ kotlin {
             dependencies {
                 api(project(":objectstore-core"))
                 implementation(libs.okio)
+                implementation(libs.datetime)
             }
         }
         val commonTest by getting {
