@@ -1,4 +1,5 @@
 .gradle
+.fleet
 /local.properties
 .idea/
 !.idea/codeStyleSettings.xml
