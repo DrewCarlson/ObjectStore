@@ -50,11 +50,13 @@ abstract class ObjectStoreTest(
 ) : RobolectricTestCases() {
 
     private lateinit var store: ObjectStore
+    private lateinit var storeWriter: ObjectStoreWriter
 
     @BeforeTest
     fun setup() {
+        storeWriter = getStoreWriter(secure)
         store = ObjectStore(
-            storeWriter = getStoreWriter(secure),
+            storeWriter = storeWriter,
             storeSerializer = serializer
         )
     }
@@ -203,5 +205,22 @@ abstract class ObjectStoreTest(
         assertFailsWith<IllegalArgumentException> { store.get<ULong>() }
         assertFailsWith<IllegalArgumentException> { store.get<UByte>() }
         assertFailsWith<IllegalArgumentException> { store.get<UShort>() }
+    }
+
+    @Test
+    fun testValueTransformingStoreWriter() {
+        val subject = storeWriter.transformValue<Any>(
+            transformGet = { _, value -> (value as? String)?.removePrefix("test-") },
+            transformSet = { _, value -> (value as? String)?.let { "test-$it" } }
+        )
+        val testStore = ObjectStore(subject, serializer)
+
+        testStore.put(key = "test", value = "abc")
+
+        assertEquals("test-abc", storeWriter.get(typeOf<String>(), key = "test"))
+        assertEquals("abc", subject.get(typeOf<String>(), key = "test"))
+        assertEquals("abc", testStore.get(key = "test"))
+
+        testStore.put<String>(key = "test", value = null)
     }
 }
