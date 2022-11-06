@@ -178,6 +178,18 @@ abstract class ObjectStoreTest(
     }
 
     @Test
+    fun testClearEmitsNullToFlows() {
+        store.put(TestClass())
+
+        val flow = store.getFlow<TestClass>()
+
+        store.clear()
+
+        assertNull(store.getOrNull<TestClass>())
+        assertNull(flow.value)
+    }
+
+    @Test
     fun testBasicTypesFailWithoutKey() {
         assertFailsWith<IllegalArgumentException> { store.get<Boolean>() }
         assertFailsWith<IllegalArgumentException> { store.get<Long>() }

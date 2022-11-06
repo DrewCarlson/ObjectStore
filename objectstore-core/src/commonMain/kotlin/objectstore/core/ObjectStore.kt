@@ -44,8 +44,12 @@ public class ObjectStore(
         return storeWriter.keys()
     }
 
+    @Suppress("UNCHECKED_CAST")
     public fun clear() {
         storeWriter.clear()
+        flowsMap.forEach { (_, flow) ->
+            (flow as MutableStateFlow<Any?>).tryEmit(null)
+        }
     }
 
     public inline fun <reified T : Any> getOrNull(key: String? = null): T? {
