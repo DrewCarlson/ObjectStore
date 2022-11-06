@@ -17,6 +17,7 @@
 package objectstore.fs
 
 import objectstore.core.ObjectStoreWriter
+import okio.ByteString.Companion.decodeHex
 import okio.ByteString.Companion.encodeUtf8
 import okio.FileSystem
 import okio.Path
@@ -50,9 +51,21 @@ internal class FileStoreWriter(
         return type == typeOf<String>()
     }
 
+    override fun keys(): Set<String> {
+        return fs.listOrNull(path)
+            .orEmpty()
+            .mapNotNull { path ->
+                try {
+                    path.name.decodeHex().utf8()
+                } catch (e: IllegalArgumentException) {
+                    null // Unknown file
+                }
+            }.toSet()
+    }
+
     @Suppress("UNCHECKED_CAST")
     override fun <T : Any> get(type: KType, key: String): T? {
-        val keyHash = key.encodeUtf8().sha1().hex()
+        val keyHash = key.encodeUtf8().hex()
         val objectPath = path.resolve(keyHash)
         return if (fs.exists(objectPath)) {
             fs.read(objectPath) { readUtf8() } as T?
@@ -62,13 +75,25 @@ internal class FileStoreWriter(
     }
 
     override fun <T : Any> put(type: KType, key: String, value: T?) {
-        val keyHash = key.encodeUtf8().sha1().hex()
+        val keyHash = key.encodeUtf8().hex()
         val objectPath = path.resolve(keyHash)
         if (value == null) {
             fs.delete(objectPath)
         } else {
-            println(objectPath.toString())
             fs.write(objectPath) { writeUtf8(value as String) }
         }
+    }
+
+    override fun clear() {
+        fs.listOrNull(path)
+            .orEmpty()
+            .forEach { path ->
+                try {
+                    path.name.decodeHex()
+                    fs.delete(path)
+                } catch (e: IllegalArgumentException) {
+                    // Unknown file
+                }
+            }
     }
 }

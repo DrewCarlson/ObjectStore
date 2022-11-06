@@ -34,8 +34,17 @@ public fun LocalStorageStoreWriter(): ObjectStoreWriter {
 public class StorageStoreWriter(
     private val storage: Storage
 ) : ObjectStoreWriter {
+
     override fun canStoreType(type: KType): Boolean {
         return type == typeOf<String>()
+    }
+
+    override fun keys(): Set<String> {
+        val keys = mutableSetOf<String>()
+        repeat(storage.length) { i ->
+            storage.key(i)?.run(keys::add)
+        }
+        return keys.toSet()
     }
 
     override fun <T : Any> put(type: KType, key: String, value: T?) {
@@ -49,5 +58,9 @@ public class StorageStoreWriter(
     @Suppress("UNCHECKED_CAST")
     override fun <T : Any> get(type: KType, key: String): T? {
         return storage[key] as? T?
+    }
+
+    override fun clear() {
+        storage.clear()
     }
 }

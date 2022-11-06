@@ -40,14 +40,14 @@ class FileStoreWriterTest {
     @Test
     fun testPut() {
         store.put("test-value", "test-key")
-        val path = basePath.resolve("test-key".encodeUtf8().sha1().hex())
+        val path = basePath.resolve("test-key".encodeUtf8().hex())
         assertTrue(fs.exists(path))
         assertEquals("test-value", fs.read(path) { readUtf8() })
     }
 
     @Test
     fun testGetWithValue() {
-        val path = basePath.resolve("test-key".encodeUtf8().sha1().hex())
+        val path = basePath.resolve("test-key".encodeUtf8().hex())
         fs.write(path, true) { writeUtf8("test-value") }
 
         assertEquals("test-value", store.getOrNull(key = "test-key"))
@@ -60,7 +60,7 @@ class FileStoreWriterTest {
 
     @Test
     fun testRemove() {
-        val path = basePath.resolve("test-key".encodeUtf8().sha1().hex())
+        val path = basePath.resolve("test-key".encodeUtf8().hex())
         fs.write(path) { writeUtf8("test-value") }
 
         store.remove<String>(key = "test-key")

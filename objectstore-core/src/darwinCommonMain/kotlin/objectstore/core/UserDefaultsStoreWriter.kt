@@ -35,6 +35,9 @@ public class UserDefaultsStoreWriter(
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
+    override fun keys(): Set<String> = defaults.dictionaryRepresentation().keys as Set<String>
+
     override fun <T : Any> put(type: KType, key: String, value: T?) {
         if (value == null) {
             defaults.removeObjectForKey(key)
@@ -60,5 +63,9 @@ public class UserDefaultsStoreWriter(
             Float::class -> defaults.floatForKey(key) as T?
             else -> error("Cannot retrieve type '$type'")
         }
+    }
+
+    override fun clear() {
+        keys().forEach(defaults::removeObjectForKey)
     }
 }

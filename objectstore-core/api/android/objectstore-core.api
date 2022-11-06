@@ -8,7 +8,9 @@ public final class objectstore/core/BuildConfig {
 public final class objectstore/core/InMemoryStoreWriter : objectstore/core/ObjectStoreWriter {
 	public fun <init> ()V
 	public fun canStoreType (Lkotlin/reflect/KType;)Z
+	public fun clear ()V
 	public fun get (Lkotlin/reflect/KType;Ljava/lang/String;)Ljava/lang/Object;
+	public fun keys ()Ljava/util/Set;
 	public fun put (Lkotlin/reflect/KType;Ljava/lang/String;Ljava/lang/Object;)V
 	public fun unhandledType (Lkotlin/reflect/KType;)Ljava/lang/Void;
 }
@@ -19,11 +21,13 @@ public final class objectstore/core/ObjectStore {
 	public fun <init> (Lobjectstore/core/ObjectStoreWriter;Lobjectstore/core/ObjectStoreSerializer;)V
 	public synthetic fun <init> (Lobjectstore/core/ObjectStoreWriter;Lobjectstore/core/ObjectStoreSerializer;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun checkKeyForType (Lkotlin/reflect/KType;Ljava/lang/String;)Lkotlin/reflect/KType;
+	public final fun clear ()V
 	public final fun get (Lkotlin/reflect/KType;Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/Object;
 	public static synthetic fun get$default (Lobjectstore/core/ObjectStore;Lkotlin/reflect/KType;Ljava/lang/String;Ljava/lang/Object;ILjava/lang/Object;)Ljava/lang/Object;
 	public final fun getFlow (Lkotlin/reflect/KType;Ljava/lang/String;Ljava/lang/Object;)Lkotlinx/coroutines/flow/StateFlow;
 	public static synthetic fun getFlow$default (Lobjectstore/core/ObjectStore;Lkotlin/reflect/KType;Ljava/lang/String;Ljava/lang/Object;ILjava/lang/Object;)Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getOrNull (Lkotlin/reflect/KType;Ljava/lang/String;)Ljava/lang/Object;
+	public final fun keys ()Ljava/util/Set;
 	public final fun put (Lkotlin/reflect/KType;Ljava/lang/String;Ljava/lang/Object;)V
 	public static synthetic fun put$default (Lobjectstore/core/ObjectStore;Lkotlin/reflect/KType;Ljava/lang/String;Ljava/lang/Object;ILjava/lang/Object;)V
 	public final fun remove (Lkotlin/reflect/KType;Ljava/lang/String;)V
@@ -46,7 +50,9 @@ public final class objectstore/core/ObjectStoreSerializer$Companion : objectstor
 
 public abstract interface class objectstore/core/ObjectStoreWriter {
 	public abstract fun canStoreType (Lkotlin/reflect/KType;)Z
+	public abstract fun clear ()V
 	public abstract fun get (Lkotlin/reflect/KType;Ljava/lang/String;)Ljava/lang/Object;
+	public abstract fun keys ()Ljava/util/Set;
 	public abstract fun put (Lkotlin/reflect/KType;Ljava/lang/String;Ljava/lang/Object;)V
 	public abstract fun unhandledType (Lkotlin/reflect/KType;)Ljava/lang/Void;
 }
@@ -60,7 +66,9 @@ public final class objectstore/core/SharedPreferenceStoreWriter : objectstore/co
 	public fun <init> (Ljava/lang/String;Landroid/content/Context;I)V
 	public synthetic fun <init> (Ljava/lang/String;Landroid/content/Context;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun canStoreType (Lkotlin/reflect/KType;)Z
+	public fun clear ()V
 	public fun get (Lkotlin/reflect/KType;Ljava/lang/String;)Ljava/lang/Object;
+	public fun keys ()Ljava/util/Set;
 	public fun put (Lkotlin/reflect/KType;Ljava/lang/String;Ljava/lang/Object;)V
 	public fun unhandledType (Lkotlin/reflect/KType;)Ljava/lang/Void;
 }

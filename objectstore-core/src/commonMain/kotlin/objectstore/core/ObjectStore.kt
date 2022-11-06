@@ -40,6 +40,14 @@ public class ObjectStore(
     private val lock = SynchronizedObject()
     private val flowsMap = mutableMapOf<String, MutableStateFlow<*>>()
 
+    public fun keys(): Set<String> {
+        return storeWriter.keys()
+    }
+
+    public fun clear() {
+        storeWriter.clear()
+    }
+
     public inline fun <reified T : Any> getOrNull(key: String? = null): T? {
         val type = checkKeyForType(typeOf<T>(), key)
         return getOrNull(type, key ?: keyForType(type))

@@ -38,6 +38,8 @@ public class SharedPreferenceStoreWriter(
         }
     }
 
+    override fun keys(): Set<String> = sharedPreferences.all.keys.toSet()
+
     override fun <T : Any> put(type: KType, key: String, value: T?) {
         sharedPreferences.edit().apply {
             if (value == null) {
@@ -67,5 +69,9 @@ public class SharedPreferenceStoreWriter(
                 else -> unhandledType(type)
             } as T?
         }
+    }
+
+    override fun clear() {
+        sharedPreferences.edit().clear().apply()
     }
 }

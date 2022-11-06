@@ -22,9 +22,13 @@ public interface ObjectStoreWriter {
 
     public fun canStoreType(type: KType): Boolean
 
+    public fun keys(): Set<String>
+
     public fun <T : Any> put(type: KType, key: String, value: T?)
 
     public fun <T : Any> get(type: KType, key: String): T?
+
+    public fun clear()
 
     public fun unhandledType(type: KType): Nothing {
         error("Unsupported storage type '$type', install an ObjectStoreSerializer")

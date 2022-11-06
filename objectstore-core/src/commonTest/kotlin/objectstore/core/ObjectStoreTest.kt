@@ -161,6 +161,23 @@ abstract class ObjectStoreTest(
     }
 
     @Test
+    fun testKeys() {
+        store.put(TestClass())
+        store.put(value = 1, "test")
+
+        assertEquals(setOf("test", "objectstore.core.TestClass"), store.keys())
+    }
+
+    @Test
+    fun testClear() {
+        store.put(TestClass())
+        store.put(value = 1, "test")
+        store.clear()
+
+        assertEquals(emptySet(), store.keys())
+    }
+
+    @Test
     fun testBasicTypesFailWithoutKey() {
         assertFailsWith<IllegalArgumentException> { store.get<Boolean>() }
         assertFailsWith<IllegalArgumentException> { store.get<Long>() }

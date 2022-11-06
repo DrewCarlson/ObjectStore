@@ -40,7 +40,27 @@ public class KeychainStoreWriter(
             Int::class,
             Long::class,
             Float::class -> true
+
             else -> false
+        }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    override fun keys(): Set<String> = memScoped {
+        context {
+            val query = query {
+                put(kSecClass, kSecClassGenericPassword)
+                put(kSecReturnAttributes, kCFBooleanTrue)
+                put(kSecMatchLimit, kSecMatchLimitAll)
+            }
+            val result = alloc<CFTypeRefVar>()
+            val isValid = SecItemCopyMatching(query, result.ptr).checkState()
+            if (isValid) {
+                val items = CFBridgingRelease(result.value) as? List<Map<String, Any>>
+                items?.mapNotNull { it["acct"] as? String }?.toSet() ?: setOf()
+            } else {
+                setOf()
+            }
         }
     }
 
@@ -73,6 +93,16 @@ public class KeychainStoreWriter(
                 else -> unhandledType(type)
             }
             add(key, convertedValue)
+        }
+    }
+
+    override fun clear() {
+        context {
+            SecItemDelete(
+                query {
+                    put(kSecClass, kSecClassGenericPassword)
+                }
+            ).checkState()
         }
     }
 

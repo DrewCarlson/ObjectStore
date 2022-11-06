@@ -76,6 +76,8 @@ object BasicTypeStoreWriter : ObjectStoreWriter {
         }
     }
 
+    override fun keys(): Set<String> = data.keys.toSet()
+
     override fun <T : Any> put(type: KType, key: String, value: T?) {
         data[key] = value
     }
@@ -83,5 +85,9 @@ object BasicTypeStoreWriter : ObjectStoreWriter {
     override fun <T : Any> get(type: KType, key: String): T? {
         @Suppress("UNCHECKED_CAST")
         return data[key] as? T?
+    }
+
+    override fun clear() {
+        data.clear()
     }
 }

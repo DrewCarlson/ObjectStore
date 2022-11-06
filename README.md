@@ -22,8 +22,6 @@ val store = ObjectStore(
 
 // Store an object
 store.put(User("username", "email", ...))
-// Remove an object
-store.put<User>(null)
 
 // Get an object or null
 val user: User? = store.getOrNull<User>()
@@ -34,9 +32,16 @@ val user: User = store.get(default = User(...))
 
 // Get a StateFlow
 val userFlow: StateFlow<User?> = store.getFlow<User>()
-
 // Calls to `put` new user objects will be emitted
 userFlow.collect { println(it) }
+
+// Get all keys
+store.keys()
+
+// Remove an object
+store.remove<User>()
+// Remove all objects
+store.clear()
 ```
 
 When storing basic types such as `String`, `Boolean`, etc. you must provide a `key` for the record.
@@ -80,7 +85,7 @@ val store = ObjectStore(
 ```
 
 The provided path must not exist or be an existing directory where files can be stored.
-Each value will be stored in a separate file using the hex encoded SHA1 sum of the key as the filename.
+Each value will be stored in a separate file using the hex encoded key as the filename.
 
 ### Secure Writers
 
