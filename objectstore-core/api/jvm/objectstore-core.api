@@ -3,9 +3,27 @@ public final class objectstore/core/InMemoryStoreWriter : objectstore/core/Objec
 	public fun canStoreType (Lkotlin/reflect/KType;)Z
 	public fun clear ()V
 	public fun get (Lkotlin/reflect/KType;Ljava/lang/String;)Ljava/lang/Object;
+	public fun getRaw (Lkotlin/reflect/KType;Ljava/lang/String;)Ljava/lang/Object;
 	public fun keys ()Ljava/util/Set;
 	public fun put (Lkotlin/reflect/KType;Ljava/lang/String;Ljava/lang/Object;)V
+	public fun putRaw (Lkotlin/reflect/KType;Ljava/lang/String;Ljava/lang/Object;)V
 	public fun unhandledType (Lkotlin/reflect/KType;)Ljava/lang/Void;
+}
+
+public final class objectstore/core/MemCachedStoreWriter : objectstore/core/ObjectStoreWriter {
+	public fun <init> (Lobjectstore/core/ObjectStoreWriter;)V
+	public fun canStoreType (Lkotlin/reflect/KType;)Z
+	public fun clear ()V
+	public fun get (Lkotlin/reflect/KType;Ljava/lang/String;)Ljava/lang/Object;
+	public fun getRaw (Lkotlin/reflect/KType;Ljava/lang/String;)Ljava/lang/Object;
+	public fun keys ()Ljava/util/Set;
+	public fun put (Lkotlin/reflect/KType;Ljava/lang/String;Ljava/lang/Object;)V
+	public fun putRaw (Lkotlin/reflect/KType;Ljava/lang/String;Ljava/lang/Object;)V
+	public fun unhandledType (Lkotlin/reflect/KType;)Ljava/lang/Void;
+}
+
+public final class objectstore/core/MemCachedStoreWriterKt {
+	public static final fun memCached (Lobjectstore/core/ObjectStoreWriter;)Lobjectstore/core/ObjectStoreWriter;
 }
 
 public final class objectstore/core/ObjectStore {
@@ -45,12 +63,32 @@ public abstract interface class objectstore/core/ObjectStoreWriter {
 	public abstract fun canStoreType (Lkotlin/reflect/KType;)Z
 	public abstract fun clear ()V
 	public abstract fun get (Lkotlin/reflect/KType;Ljava/lang/String;)Ljava/lang/Object;
+	public abstract fun getRaw (Lkotlin/reflect/KType;Ljava/lang/String;)Ljava/lang/Object;
 	public abstract fun keys ()Ljava/util/Set;
 	public abstract fun put (Lkotlin/reflect/KType;Ljava/lang/String;Ljava/lang/Object;)V
+	public abstract fun putRaw (Lkotlin/reflect/KType;Ljava/lang/String;Ljava/lang/Object;)V
 	public abstract fun unhandledType (Lkotlin/reflect/KType;)Ljava/lang/Void;
 }
 
 public final class objectstore/core/ObjectStoreWriter$DefaultImpls {
+	public static fun getRaw (Lobjectstore/core/ObjectStoreWriter;Lkotlin/reflect/KType;Ljava/lang/String;)Ljava/lang/Object;
+	public static fun putRaw (Lobjectstore/core/ObjectStoreWriter;Lkotlin/reflect/KType;Ljava/lang/String;Ljava/lang/Object;)V
 	public static fun unhandledType (Lobjectstore/core/ObjectStoreWriter;Lkotlin/reflect/KType;)Ljava/lang/Void;
+}
+
+public final class objectstore/core/ValueTransformingStoreWriter : objectstore/core/ObjectStoreWriter {
+	public fun <init> (Lobjectstore/core/ObjectStoreWriter;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;)V
+	public fun canStoreType (Lkotlin/reflect/KType;)Z
+	public fun clear ()V
+	public fun get (Lkotlin/reflect/KType;Ljava/lang/String;)Ljava/lang/Object;
+	public fun getRaw (Lkotlin/reflect/KType;Ljava/lang/String;)Ljava/lang/Object;
+	public fun keys ()Ljava/util/Set;
+	public fun put (Lkotlin/reflect/KType;Ljava/lang/String;Ljava/lang/Object;)V
+	public fun putRaw (Lkotlin/reflect/KType;Ljava/lang/String;Ljava/lang/Object;)V
+	public fun unhandledType (Lkotlin/reflect/KType;)Ljava/lang/Void;
+}
+
+public final class objectstore/core/ValueTransformingStoreWriterKt {
+	public static final fun transformValue (Lobjectstore/core/ObjectStoreWriter;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;)Lobjectstore/core/ValueTransformingStoreWriter;
 }
 

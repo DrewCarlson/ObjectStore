@@ -28,6 +28,10 @@ public interface ObjectStoreWriter {
 
     public fun <T : Any> get(type: KType, key: String): T?
 
+    public fun <T : Any> putRaw(type: KType, key: String, value: T?): Unit = Unit
+
+    public fun <T : Any> getRaw(type: KType, key: String): T? = null
+
     public fun clear()
 
     public fun unhandledType(type: KType): Nothing {

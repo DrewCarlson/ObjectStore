@@ -84,18 +84,20 @@ public class ObjectStore(
 
     @PublishedApi
     internal fun <T : Any> getOrNull(type: KType, key: String): T? {
-        return if (storeWriter.canStoreType(type)) {
+        return storeWriter.getRaw(type, key) ?: if (storeWriter.canStoreType(type)) {
             storeWriter.get(type, key)
         } else {
-            storeWriter.get<String>(STRING, key)?.let {
-                storeSerializer.deserialize(type, it)
+            storeWriter.get<String>(STRING, key)?.let { serializedValue ->
+                storeSerializer.deserialize<T>(type, serializedValue).also { value ->
+                    storeWriter.putRaw(type, key, value)
+                }
             }
         }
     }
 
     @PublishedApi
     internal fun <T : Any> get(type: KType, key: String, default: T? = null): T {
-        return if (storeWriter.canStoreType(type)) {
+        return storeWriter.getRaw(type, key) ?: if (storeWriter.canStoreType(type)) {
             requireNotNull(storeWriter.get(type, key) ?: default?.also { put(type, key, it) }) {
                 "No value for '$key' and default was null"
             }
@@ -106,7 +108,9 @@ public class ObjectStore(
                 put(type, key, default)
                 default
             } else {
-                storeSerializer.deserialize(type, value)
+                storeSerializer.deserialize<T>(type, value).also { deserializedValue ->
+                    storeWriter.putRaw(type, key, deserializedValue)
+                }
             }
         }
     }
@@ -124,6 +128,7 @@ public class ObjectStore(
 
     @PublishedApi
     internal fun <T : Any> put(type: KType, key: String, value: T? = null) {
+        storeWriter.putRaw(type, key, value)
         if (value == null) {
             storeWriter.put(type, key, null)
         } else {
@@ -140,7 +145,13 @@ public class ObjectStore(
 
     @PublishedApi
     internal fun <T : Any> remove(type: KType, key: String) {
-        storeWriter.put<T>(type, key, null)
+        storeWriter.putRaw<T>(type, key, null)
+        if (storeWriter.canStoreType(type)) {
+            storeWriter.put<T>(type, key, null)
+        } else {
+            storeWriter.put<String>(STRING, key, null)
+        }
+
         updateStateFlow(key, null)
     }
 

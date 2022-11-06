@@ -223,4 +223,80 @@ abstract class ObjectStoreTest(
 
         testStore.put<String>(key = "test", value = null)
     }
+
+    @Test
+    fun testMemCachedStoreWriterWithBasicType() {
+        val cache = InMemoryStoreWriter()
+        val subject = storeWriter.memCached(cache)
+        val testStore = ObjectStore(subject, serializer)
+
+        val testStringKey = "test"
+        val testStringValue = "abc"
+
+        testStore.put(key = testStringKey, value = testStringValue)
+
+        assertEquals(setOf(testStringKey), cache.keys())
+
+        assertEquals(testStringValue, cache.get(typeOf<String>(), testStringKey))
+        assertEquals(testStringValue, storeWriter.get(typeOf<String>(), testStringKey))
+
+        testStore.remove<String>(testStringKey)
+
+        assertNull(cache.get(typeOf<String>(), testStringKey))
+        assertNull(storeWriter.get(typeOf<String>(), testStringKey))
+    }
+
+    @Test
+    fun testMemCachedStoreWriterWithObject() {
+        val cache = InMemoryStoreWriter()
+        val subject = storeWriter.memCached(cache)
+        val testStore = ObjectStore(subject, serializer)
+
+        val key = "objectstore.core.TestClass"
+        val testClass = TestClass()
+
+        testStore.put(testClass)
+
+        assertEquals(setOf(key), cache.keys())
+
+        val serializedClass = serializer.serialize(typeOf<TestClass>(), TestClass())
+        assertEquals(testClass, testStore.getOrNull())
+        assertEquals(testClass, cache.get(typeOf<TestClass>(), key))
+        assertEquals(serializedClass, storeWriter.get(typeOf<String>(), key))
+
+        testStore.remove<TestClass>()
+
+        assertNull(cache.get(typeOf<TestClass>(), key))
+        assertNull(storeWriter.get(typeOf<String>(), key))
+        assertNull(testStore.getOrNull(key))
+    }
+
+    @Test
+    fun testMemCachedStoreWriterWithExistingData() {
+        val cache = InMemoryStoreWriter()
+        val subject = storeWriter.memCached(cache)
+        val testStore = ObjectStore(subject, serializer)
+
+        val testClass = TestClass()
+        val key = "objectstore.core.TestClass"
+        val serializedClass = serializer.serialize(typeOf<TestClass>(), TestClass())
+
+        storeWriter.put(typeOf<String>(), key, serializedClass)
+
+        assertEquals(emptySet(), cache.keys())
+        assertEquals(setOf(key), subject.keys())
+        assertEquals(setOf(key), testStore.keys())
+        assertEquals(serializedClass, storeWriter.get(typeOf<String>(), key))
+        assertEquals(serializedClass, subject.get(typeOf<String>(), key))
+        assertEquals(testClass, testStore.getOrNull())
+        assertEquals(testClass, cache.get(typeOf<TestClass>(), key))
+        assertEquals(setOf(key), cache.keys())
+
+        testStore.remove<TestClass>()
+
+        assertNull(cache.get(typeOf<TestClass>(), key))
+        assertNull(storeWriter.get(typeOf<String>(), key))
+        assertNull(subject.get(typeOf<String>(), key))
+        assertNull(testStore.getOrNull(key))
+    }
 }

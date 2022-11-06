@@ -26,7 +26,7 @@ public class InMemoryStoreWriter : ObjectStoreWriter {
 
     override fun canStoreType(type: KType): Boolean = true
 
-    override fun keys(): Set<String> = map.keys.toSet()
+    override fun keys(): Set<String> = synchronized(lock) { map.keys }.toSet()
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : Any> get(type: KType, key: String): T? = synchronized(lock) { map[key] } as? T
