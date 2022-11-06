@@ -35,6 +35,8 @@ public class ObjectStore(
             val arguments = type.arguments.joinToString(", ") { keyForType(checkNotNull(it.type)) }
             return if (arguments.isBlank()) classifier else "$classifier<$arguments>"
         }
+
+        private val STRING: KType = typeOf<String>()
     }
 
     private val lock = SynchronizedObject()
@@ -44,11 +46,11 @@ public class ObjectStore(
         return storeWriter.keys()
     }
 
-    @Suppress("UNCHECKED_CAST")
     public fun clear() {
         storeWriter.clear()
         flowsMap.forEach { (_, flow) ->
-            (flow as MutableStateFlow<Any?>).tryEmit(null)
+            @Suppress("UNCHECKED_CAST")
+            (flow as MutableStateFlow<Any?>).update { null }
         }
     }
 
@@ -85,7 +87,7 @@ public class ObjectStore(
         return if (storeWriter.canStoreType(type)) {
             storeWriter.get(type, key)
         } else {
-            storeWriter.get<String>(typeOf<String>(), key)?.let {
+            storeWriter.get<String>(STRING, key)?.let {
                 storeSerializer.deserialize(type, it)
             }
         }
@@ -98,7 +100,7 @@ public class ObjectStore(
                 "No value for '$key' and default was null"
             }
         } else {
-            val value = storeWriter.get<String>(typeOf<String>(), key)
+            val value = storeWriter.get<String>(STRING, key)
             if (value == null) {
                 requireNotNull(default) { "No value for '$key' and default was null" }
                 put(type, key, default)
@@ -111,16 +113,12 @@ public class ObjectStore(
 
     @PublishedApi
     internal fun <T : Any> getFlow(type: KType, key: String, default: T? = null): StateFlow<T?> {
-        @Suppress("UNCHECKED_CAST")
-        val flow = synchronized(lock) { flowsMap[key] } as? MutableStateFlow<T>
-        return flow ?: run {
+        return getStateFlow(key) ?: run {
             val currentValue = getOrNull<T>(type, key)
             if (currentValue == null && default != null) {
                 put(type, key, default)
             }
-            MutableStateFlow(currentValue ?: default).also {
-                synchronized(lock) { flowsMap[key] = it }
-            }
+            createStateFlow(key, currentValue ?: default)
         }
     }
 
@@ -133,21 +131,33 @@ public class ObjectStore(
                 storeWriter.put(type, key, value)
             } else {
                 val serialized = storeSerializer.serialize(type, value)
-                storeWriter.put(typeOf<String>(), key, serialized)
+                storeWriter.put(STRING, key, serialized)
             }
         }
 
-        @Suppress("UNCHECKED_CAST")
-        val flow = synchronized(lock) { flowsMap[key] } as? MutableStateFlow<T?>
-        flow?.update { value }
+        updateStateFlow(key, value)
     }
 
     @PublishedApi
     internal fun <T : Any> remove(type: KType, key: String) {
         storeWriter.put<T>(type, key, null)
-        @Suppress("UNCHECKED_CAST")
-        val flow = synchronized(lock) { flowsMap[key] } as? MutableStateFlow<T?>
-        flow?.update { null }
+        updateStateFlow(key, null)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun <T : Any> updateStateFlow(key: String, value: T?) {
+        getStateFlow<T>(key)?.update { value }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun <T : Any> getStateFlow(key: String): MutableStateFlow<T?>? {
+        return synchronized(lock) { flowsMap[key] } as? MutableStateFlow<T?>
+    }
+
+    private fun <T : Any> createStateFlow(key: String, value: T?): MutableStateFlow<T?> {
+        val stateFlow = MutableStateFlow(value)
+        synchronized(lock) { flowsMap[key] = stateFlow }
+        return stateFlow
     }
 
     @PublishedApi

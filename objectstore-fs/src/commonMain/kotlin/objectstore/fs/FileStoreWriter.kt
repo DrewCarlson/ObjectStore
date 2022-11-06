@@ -23,8 +23,8 @@ import okio.FileSystem
 import okio.Path
 import okio.Path.Companion.toPath
 import kotlin.reflect.KType
-import kotlin.reflect.typeOf
 
+@Suppress("FunctionName")
 public fun FileStoreWriter(path: String): ObjectStoreWriter {
     return FileStoreWriter(path, FS)
 }
@@ -40,7 +40,7 @@ internal class FileStoreWriter(
         if (fs.exists(this.path)) {
             val metadata = fs.metadataOrNull(this.path)
             require(metadata?.isDirectory == true) {
-                "FileStoreWriter path must be a directory."
+                "FileStoreWriter path must be a directory: $path"
             }
         } else {
             fs.createDirectories(this.path, true)
@@ -48,7 +48,7 @@ internal class FileStoreWriter(
     }
 
     override fun canStoreType(type: KType): Boolean {
-        return type == typeOf<String>()
+        return type.classifier == String::class
     }
 
     override fun keys(): Set<String> {

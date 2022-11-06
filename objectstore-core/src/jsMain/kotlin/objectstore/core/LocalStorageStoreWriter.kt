@@ -21,8 +21,8 @@ import org.w3c.dom.Storage
 import org.w3c.dom.get
 import org.w3c.dom.set
 import kotlin.reflect.KType
-import kotlin.reflect.typeOf
 
+@Suppress("FunctionName")
 public fun LocalStorageStoreWriter(): ObjectStoreWriter {
     return runCatching { StorageStoreWriter(window.localStorage) }.getOrElse {
         println("WARNING: LocalStorageStoreWriter does not support Node.js, InMemoryStoreWriter will be used.")
@@ -36,7 +36,7 @@ public class StorageStoreWriter(
 ) : ObjectStoreWriter {
 
     override fun canStoreType(type: KType): Boolean {
-        return type == typeOf<String>()
+        return type.classifier == String::class
     }
 
     override fun keys(): Set<String> {
