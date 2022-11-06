@@ -48,6 +48,7 @@ public class StorageStoreWriter(
     }
 
     override fun <T : Any> put(type: KType, key: String, value: T?) {
+        if (type.classifier != String::class) unhandledType(type)
         if (value == null) {
             storage.removeItem(key)
         } else {
@@ -57,6 +58,7 @@ public class StorageStoreWriter(
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : Any> get(type: KType, key: String): T? {
+        if (type.classifier != String::class) unhandledType(type)
         return storage[key] as? T?
     }
 

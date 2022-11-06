@@ -65,6 +65,7 @@ internal class FileStoreWriter(
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : Any> get(type: KType, key: String): T? {
+        if (type.classifier != String::class) unhandledType(type)
         val keyHash = key.encodeUtf8().hex()
         val objectPath = path.resolve(keyHash)
         return if (fs.exists(objectPath)) {
@@ -75,6 +76,7 @@ internal class FileStoreWriter(
     }
 
     override fun <T : Any> put(type: KType, key: String, value: T?) {
+        if (type.classifier != String::class) unhandledType(type)
         val keyHash = key.encodeUtf8().hex()
         val objectPath = path.resolve(keyHash)
         if (value == null) {
