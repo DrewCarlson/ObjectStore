@@ -1,0 +1,15 @@
+$dokka.format:html-v1
+$dokka.linkExtension:html
+
+module:objectstore-cbor
+objectstore.cbor
+module:objectstore-core
+objectstore.core
+module:objectstore-fs
+objectstore.fs
+module:objectstore-json
+objectstore.json
+module:objectstore-protobuf
+objectstore.protobuf
+module:objectstore-secure
+objectstore.secure
