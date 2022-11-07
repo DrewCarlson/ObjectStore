@@ -94,6 +94,22 @@ To store data in a secure way, the `objectstore-secure` module provides Writers 
 - iOS/macOS/tvOS/watchOS: `KeychainStoreWritre("com.service.name", "com.service.group")`
 - Android: `EncryptedSharedPreferencesStoreWriter("prefs_name", context)`
 
+### Wrapped Writers
+
+The `ValueTransformingStoreWriter` provides a hook to encode/decode values before they are written to disk.
+The transform methods are defined as `(type: KType, value: T) -> T`, when unhandled you must return the original value.
+```kotlin
+val storeWriter = InMemoryStoreWriter().transformValue(
+    transformGet = { _, value -> (value as? String)?.base64Encoded() ?: value },
+    transformSet = { _, value -> (value as? String)?.base64Decoded() ?: value }
+)
+```
+
+The `MemCachedStoreWriter` provides lazy in-memory caching around any `ObjectStoreWriter` implementation.
+```kotlin
+val storeWriter = LocalStorageStoreWriter().memCached()
+```
+
 ## Download
 
 [![Maven Central](https://img.shields.io/maven-central/v/org.drewcarlson/objectstore-core-jvm?label=maven&color=blue)](https://search.maven.org/search?q=g:org.drewcarlson%20a:objectstore-*)
