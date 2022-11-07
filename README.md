@@ -100,14 +100,14 @@ The `ValueTransformingStoreWriter` provides a hook to encode/decode values befor
 The transform methods are defined as `(type: KType, value: T) -> T`, when unhandled you must return the original value.
 ```kotlin
 val storeWriter = InMemoryStoreWriter().transformValue(
-    transformGet = { _, value -> (value as? String)?.base64Encoded() ?: value },
-    transformSet = { _, value -> (value as? String)?.base64Decoded() ?: value }
+    transformGet = { _, value -> (value as? String)?.base64Decoded() ?: value },
+    transformSet = { _, value -> (value as? String)?.base64Encoded() ?: value }
 )
 ```
 
 The `MemCachedStoreWriter` provides lazy in-memory caching around any `ObjectStoreWriter` implementation.
 ```kotlin
-val storeWriter = LocalStorageStoreWriter().memCached()
+val storeWriter = FileStoreWriter("/data").memCached()
 ```
 
 ## Download
