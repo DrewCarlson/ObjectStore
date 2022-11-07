@@ -262,7 +262,11 @@ abstract class ObjectStoreTest(
         val serializedClass = serializer.serialize(typeOf<TestClass>(), TestClass())
         assertEquals(testClass, testStore.getOrNull())
         assertEquals(testClass, cache.get(typeOf<TestClass>(), key))
-        assertEquals(serializedClass, storeWriter.get(typeOf<String>(), key))
+        if (storeWriter is InMemoryStoreWriter) {
+            assertEquals(testClass, storeWriter.get(typeOf<TestClass>(), key))
+        } else {
+            assertEquals(serializedClass, storeWriter.get(typeOf<String>(), key))
+        }
 
         testStore.remove<TestClass>()
 
@@ -279,9 +283,13 @@ abstract class ObjectStoreTest(
 
         val testClass = TestClass()
         val key = "objectstore.core.TestClass"
-        val serializedClass = serializer.serialize(typeOf<TestClass>(), TestClass())
-
-        storeWriter.put(typeOf<String>(), key, serializedClass)
+        val serializedClass: Any = if (storeWriter is InMemoryStoreWriter) {
+            testClass.also { storeWriter.put(typeOf<TestClass>(), key, it) }
+        } else {
+            serializer.serialize(typeOf<TestClass>(), testClass).also {
+                storeWriter.put(typeOf<String>(), key, it)
+            }
+        }
 
         assertEquals(emptySet(), cache.keys())
         assertEquals(setOf(key), subject.keys())

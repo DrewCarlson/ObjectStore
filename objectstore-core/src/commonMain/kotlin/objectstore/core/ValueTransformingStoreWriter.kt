@@ -38,6 +38,14 @@ public class ValueTransformingStoreWriter(
     private val transformSet: ValueTransformer<Any?>
 ) : ObjectStoreWriter by storeWriter {
 
+    override fun <T : Any> getRaw(type: KType, key: String): T? {
+        return get(type, key)
+    }
+
+    override fun <T : Any> putRaw(type: KType, key: String, value: T?) {
+        put(type, key, value)
+    }
+
     override fun <T : Any> get(type: KType, key: String): T? {
         return storeWriter.get<T>(type, key)?.let {
             @Suppress("UNCHECKED_CAST")

@@ -28,14 +28,30 @@ public class InMemoryStoreWriter : ObjectStoreWriter {
 
     override fun keys(): Set<String> = synchronized(lock) { map.keys }.toSet()
 
-    @Suppress("UNCHECKED_CAST")
-    override fun <T : Any> get(type: KType, key: String): T? = synchronized(lock) { map[key] } as? T
-
-    override fun <T : Any> put(type: KType, key: String, value: T?): Unit = synchronized(lock) {
-        if (value == null) map.remove(key) else map[key] = value
+    override fun <T : Any> putRaw(type: KType, key: String, value: T?) {
+        synchronized(lock) {
+            if (value == null) {
+                map.remove(key)
+            } else {
+                map[key] = value
+            }
+        }
     }
 
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : Any> getRaw(type: KType, key: String): T? =
+        synchronized(lock) { map[key] as? T? }
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : Any> get(type: KType, key: String): T? =
+        synchronized(lock) { map[key] } as? T
+
+    override fun <T : Any> put(type: KType, key: String, value: T?): Unit =
+        synchronized(lock) {
+            if (value == null) map.remove(key) else map[key] = value
+        }
+
     override fun clear() {
-        map.clear()
+        synchronized(lock) { map.clear() }
     }
 }

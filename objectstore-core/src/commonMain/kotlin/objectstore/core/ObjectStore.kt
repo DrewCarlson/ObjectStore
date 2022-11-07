@@ -48,7 +48,9 @@ public class ObjectStore(
 
     public fun clear() {
         storeWriter.clear()
-        flowsMap.forEach { (_, flow) ->
+        synchronized(lock) {
+            flowsMap.values.toList()
+        }.forEach { flow ->
             @Suppress("UNCHECKED_CAST")
             (flow as MutableStateFlow<Any?>).update { null }
         }
@@ -85,13 +87,13 @@ public class ObjectStore(
     @PublishedApi
     internal fun <T : Any> getOrNull(type: KType, key: String): T? {
         return storeWriter.getRaw(type, key) ?: if (storeWriter.canStoreType(type)) {
-            storeWriter.get(type, key)
+            storeWriter.get<T>(type, key)
         } else {
             storeWriter.get<String>(STRING, key)?.let { serializedValue ->
-                storeSerializer.deserialize<T>(type, serializedValue).also { value ->
-                    storeWriter.putRaw(type, key, value)
-                }
+                storeSerializer.deserialize(type, serializedValue)
             }
+        }.also { value ->
+            storeWriter.putRaw(type, key, value)
         }
     }
 
@@ -131,13 +133,11 @@ public class ObjectStore(
         storeWriter.putRaw(type, key, value)
         if (value == null) {
             storeWriter.put(type, key, null)
+        } else if (storeWriter.canStoreType(type)) {
+            storeWriter.put(type, key, value)
         } else {
-            if (storeWriter.canStoreType(type)) {
-                storeWriter.put(type, key, value)
-            } else {
-                val serialized = storeSerializer.serialize(type, value)
-                storeWriter.put(STRING, key, serialized)
-            }
+            val serialized = storeSerializer.serialize(type, value)
+            storeWriter.put(STRING, key, serialized)
         }
 
         updateStateFlow(key, value)
