@@ -39,7 +39,7 @@ atomicfu = { module = "org.jetbrains.kotlinx:atomicfu", version.ref = "atomicfu"
 atomicfu-plugin = { module = "org.jetbrains.kotlinx:atomicfu-gradle-plugin", version.ref = "atomicfu" }
 
 agp = { module = "com.android.tools.build:gradle", version.ref = "agp" }
-androidx-security-crypto = { module = "androidx.security:security-crypto-ktx", version = "1.1.0-alpha03" }
+androidx-security-crypto = { module = "androidx.security:security-crypto-ktx", version = "1.1.0-alpha04" }
 
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
 
