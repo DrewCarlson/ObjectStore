@@ -1,4 +1,5 @@
-import org.jetbrains.kotlin.gradle.targets.js.yarn.yarn
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeSimulatorTest
 
 @Suppress("DSL_SCOPE_VIOLATION")
@@ -26,7 +27,9 @@ buildscript {
 }
 
 allprojects {
-    yarn.lockFileDirectory = rootDir.resolve("gradle/kotlin-js-store")
+    plugins.withType<NodeJsRootPlugin> {
+        the<YarnRootExtension>().lockFileDirectory = rootDir.resolve("gradle/kotlin-js-store")
+    }
 
     repositories {
         mavenCentral()
