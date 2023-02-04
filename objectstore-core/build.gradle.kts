@@ -49,7 +49,7 @@ kotlin {
             }
         }
 
-        val androidTest by getting {
+        val androidUnitTest by getting {
             dependencies {
                 implementation(kotlin("test"))
                 implementation(kotlin("test-junit"))
