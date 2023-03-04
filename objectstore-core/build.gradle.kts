@@ -1,11 +1,12 @@
+@file:Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     kotlin("multiplatform")
     kotlin("plugin.serialization")
     id("com.android.library")
+    alias(libs.plugins.mavenPublish)
 }
 
 apply(plugin = "kotlinx-atomicfu")
-apply(from = "../gradle/publishing.gradle.kts")
 
 androidLib("objectstore.core")
 

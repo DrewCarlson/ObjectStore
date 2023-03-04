@@ -2,6 +2,7 @@ import org.gradle.api.Action
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import com.android.build.gradle.LibraryExtension
+import org.gradle.api.JavaVersion
 import org.gradle.api.plugins.ExtensionAware
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithHostTests
@@ -154,6 +155,10 @@ fun Project.androidLib(namespace: String, configure: Action<LibraryExtension> = 
         defaultConfig {
             minSdk = 21
             testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        }
+        compileOptions {
+            sourceCompatibility = JavaVersion.VERSION_11
+            targetCompatibility = JavaVersion.VERSION_11
         }
     }
 }

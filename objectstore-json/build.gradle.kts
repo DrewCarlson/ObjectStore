@@ -1,10 +1,10 @@
+@file:Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     kotlin("multiplatform")
     kotlin("plugin.serialization")
     id("com.android.library")
+    alias(libs.plugins.mavenPublish)
 }
-
-apply(from = "../gradle/publishing.gradle.kts")
 
 androidLib("objectstore.json")
 
