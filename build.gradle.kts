@@ -10,7 +10,7 @@ plugins {
     alias(libs.plugins.kover)
     alias(libs.plugins.binaryCompat)
     alias(libs.plugins.completeKotlin)
-    alias(libs.plugins.mavenPublish)
+    alias(libs.plugins.mavenPublish) apply false
 }
 
 buildscript {
