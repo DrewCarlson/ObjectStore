@@ -1,7 +1,7 @@
 [versions]
 kotlin = { strictly = "1.8.22" }
 dokka = "1.8.20"
-coroutines = "1.7.2"
+coroutines = "1.7.3"
 serialization = "1.5.1"
 atomicfu = "0.20.2"
 kover = "0.6.1"
