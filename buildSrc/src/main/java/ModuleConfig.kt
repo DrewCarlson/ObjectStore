@@ -12,27 +12,23 @@ fun KotlinMultiplatformExtension.jsAll(enableBrowser: Boolean = true) {
         nodejs()
         if (enableBrowser) {
             browser {
-                testTask {
+                testTask(Action {
                     useKarma {
                         useFirefoxHeadless()
                     }
-                }
+                })
             }
         }
     }
 }
 
-fun KotlinMultiplatformExtension.iosAll(enableArm32: Boolean = true) {
-    iosAll(enableArm32) { }
+fun KotlinMultiplatformExtension.iosAll() {
+    iosAll { }
 }
 
 fun KotlinMultiplatformExtension.iosAll(
-    enableArm32: Boolean = true,
     configure: Action<KotlinNativeTarget>
 ) {
-    if (enableArm32) {
-        iosArm32(configure)
-    }
     iosArm64(configure)
     iosX64 { configure.execute(this) }
     iosSimulatorArm64 { configure.execute(this) }
@@ -44,10 +40,6 @@ fun KotlinMultiplatformExtension.iosAll(
         dependsOn(sourceSets.getByName("commonTest"))
     }
 
-    if (enableArm32) {
-        sourceSets.getByName("iosArm32Main") { dependsOn(iosCommonMain) }
-        sourceSets.getByName("iosArm32Test") { dependsOn(iosCommonTest) }
-    }
     sourceSets.getByName("iosArm64Main") { dependsOn(iosCommonMain) }
     sourceSets.getByName("iosArm64Test") { dependsOn(iosCommonTest) }
     sourceSets.getByName("iosX64Main") { dependsOn(iosCommonMain) }

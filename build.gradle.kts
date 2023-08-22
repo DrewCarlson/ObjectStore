@@ -66,14 +66,4 @@ subprojects {
                 .editorConfigOverride(mapOf("disabled_rules" to "no-wildcard-imports,no-unused-imports"))
         }
     }
-
-    afterEvaluate {
-        listOfNotNull(
-            tasks.findByName("iosSimulatorArm64Test"),
-            tasks.findByName("iosX64Test")
-        ).forEach {
-            (it as KotlinNativeSimulatorTest)
-            it.deviceId = "iPhone 14"
-        }
-    }
 }

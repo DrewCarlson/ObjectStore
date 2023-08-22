@@ -9,7 +9,7 @@ plugins {
 androidLib("objectstore.protobuf")
 
 kotlin {
-    android { publishAllLibraryVariants() }
+    androidTarget { publishAllLibraryVariants() }
     jvm()
     jsAll()
     iosAll()

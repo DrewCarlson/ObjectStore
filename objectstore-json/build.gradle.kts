@@ -9,7 +9,7 @@ plugins {
 androidLib("objectstore.json")
 
 kotlin {
-    android { publishAllLibraryVariants() }
+    androidTarget { publishAllLibraryVariants() }
     jvm()
     jsAll()
     iosAll()

@@ -11,7 +11,7 @@ apply(plugin = "kotlinx-atomicfu")
 androidLib("objectstore.core")
 
 kotlin {
-    android { publishAllLibraryVariants() }
+    androidTarget { publishAllLibraryVariants() }
     jvm()
     jsAll()
     iosAll()
