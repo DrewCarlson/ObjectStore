@@ -19,7 +19,12 @@ kotlin {
     watchosAll()
 
     sourceSets {
-        all { explicitApi() }
+        all {
+            explicitApi()
+            languageSettings {
+                optIn("kotlinx.cinterop.ExperimentalForeignApi")
+            }
+        }
 
         val commonMain by getting {
             dependencies {
