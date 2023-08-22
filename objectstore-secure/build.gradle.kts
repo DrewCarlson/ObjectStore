@@ -12,7 +12,7 @@ androidLib("objectstore.secure") {
 }
 
 kotlin {
-    android { publishAllLibraryVariants() }
+    androidTarget { publishAllLibraryVariants() }
     iosAll()
     macosAll()
     tvosAll()

@@ -9,7 +9,7 @@ plugins {
 androidLib("objectstore.cbor")
 
 kotlin {
-    android { publishAllLibraryVariants() }
+    androidTarget { publishAllLibraryVariants() }
     jvm()
     jsAll()
     iosAll()

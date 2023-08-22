@@ -8,10 +8,10 @@ plugins {
 androidLib("objectstore.secure")
 
 kotlin {
-    android { publishAllLibraryVariants() }
+    androidTarget { publishAllLibraryVariants() }
     jvm()
     jsAll(enableBrowser = false)
-    iosAll(enableArm32 = false)
+    iosAll()
     tvosAll()
     watchosAll()
     macosAll()
