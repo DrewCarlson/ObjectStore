@@ -10,7 +10,7 @@ spotless = "6.19.0"
 ktlint = "0.47.0"
 robolectric = "4.10.3"
 binary_compat = "0.13.2"
-okio = "3.5.0"
+okio = "3.6.0"
 
 [plugins]
 multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
