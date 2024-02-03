@@ -24,7 +24,7 @@ jobs:
             ~/.gradle
           key: ${{ runner.os }}-${{ hashFiles('gradle.properties') }}-v1
 
-      - uses: gradle/gradle-build-action@v2
+      - uses: gradle/gradle-build-action@v3
         name: Test Jvm/JS/Apple targets
         with:
           arguments: koverMergedXmlReport
@@ -52,7 +52,7 @@ jobs:
           distribution: 'zulu'
           java-version: 11
 
-      - uses: gradle/gradle-build-action@v2
+      - uses: gradle/gradle-build-action@v3
         name: Test Windows Target
         with:
           arguments: mingwX64Test
@@ -87,7 +87,7 @@ jobs:
             ~/.gradle
           key: ${{ runner.os }}-${{ hashFiles('gradle.properties') }}-v1
 
-      - uses: gradle/gradle-build-action@v2
+      - uses: gradle/gradle-build-action@v3
         name: Test Linux Target
         with:
           arguments: linuxX64Test
