@@ -2,7 +2,7 @@
 kotlin = { strictly = "1.9.22" }
 dokka = "1.9.10"
 coroutines = "1.8.0"
-serialization = "1.6.2"
+serialization = "1.6.3"
 atomicfu = "0.23.2"
 kover = "0.6.1"
 agp = "7.4.2"
