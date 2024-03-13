@@ -30,14 +30,14 @@ jobs:
           arguments: koverMergedXmlReport
 
       - name: Archive Reports
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
           name: reports
           path: '**/build/reports/*'
 
       - name: Archive Test Results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
           name: test-results
@@ -58,14 +58,14 @@ jobs:
           arguments: mingwX64Test
 
       - name: Archive Reports
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
           name: reports
           path: '**/build/reports/*'
 
       - name: Archive Test Results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
           name: test-results
@@ -93,14 +93,14 @@ jobs:
           arguments: linuxX64Test
 
       - name: Archive Reports
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
           name: reports
           path: '**/build/reports/*'
 
       - name: Archive Test Results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
           name: test-results
@@ -112,7 +112,7 @@ jobs:
     steps:
       - uses: actions/checkout@master
       - name: Download kover reports
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: reports
       - uses: codecov/codecov-action@v4
@@ -126,7 +126,7 @@ jobs:
     steps:
       - uses: actions/checkout@master
       - name: Download test results
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: test-results
       - name: Publish Unit Test Results
