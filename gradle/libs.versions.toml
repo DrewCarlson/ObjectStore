@@ -8,7 +8,7 @@ kover = "0.6.1"
 agp = "7.4.2"
 spotless = "6.19.0"
 ktlint = "0.47.0"
-robolectric = "4.11.1"
+robolectric = "4.12.1"
 binary_compat = "0.14.0"
 okio = "3.9.0"
 
