@@ -9,7 +9,7 @@ agp = "7.4.2"
 spotless = "6.19.0"
 ktlint = "0.47.0"
 robolectric = "4.13"
-binary_compat = "0.14.0"
+binary_compat = "0.15.1"
 okio = "3.9.0"
 
 [plugins]
